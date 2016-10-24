@@ -5,17 +5,17 @@ Current Status: **Under Active Development**
 
 ## Todos
 
-[] site status reporter
-[] cached rebuild
-[] support pages
-[] Add unittest
-[] sitemap
-[] feed
-[] toc
-[] reStructuredText
-[] latex
-[] pandoc
-[] site link checker
+- [ ] site status reporter
+- [ ] cached rebuild
+- [ ] support pages
+- [ ] Add unittest
+- [ ] sitemap
+- [ ] feed
+- [ ] toc
+- [ ] reStructuredText
+- [ ] latex
+- [ ] pandoc
+- [ ] site link checker
 
 ## Features
 
