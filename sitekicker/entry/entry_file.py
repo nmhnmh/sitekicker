@@ -12,9 +12,9 @@ class EntryFile:
         return "Entry file: %s" % self.src
 
     def copy(self):
-        dest = os.path.join(
-            self.entry.output_dir,
-            os.path.basename(self.src)
-        )
-        logging.debug("Copy %s to %s" % (self.src, dest))
+        dest = os.path.join(self.entry.output_path, self.src[len(self.entry.dir)+1:])
+        dest_dir = os.path.dirname(dest)
+        logging.debug("Copy entry file from %s to %s" % (self.src, dest))
+        if not os.path.isdir(dest_dir):
+            os.makedirs(dest_dir)
         shutil.copy(self.src, dest)

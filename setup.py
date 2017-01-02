@@ -25,11 +25,12 @@ setup(
     install_requires=[
         'PyYAML',
         'Pygments',
+        'beautifulsoup4',
         'markdown',
+        'pymdown-extensions',
         'Jinja2',
         'watchdog',
-        'Pillow',
-        'pymdown-extensions',
+        'Wand',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -39,6 +40,8 @@ setup(
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

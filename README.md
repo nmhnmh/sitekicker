@@ -1,77 +1,36 @@
-**SiteKicker** is yet another static site builder written in python3(python2 is not supported).
-It is inspired by many other well-known site generators like [Jekyll](http://jekyllrb.com/).
+This is my **personal** static site generator, it lacks testings and documents at the moment.
+If you need a static site generator, find one [here](https://www.staticgen.com/) with good community support.
 
-Current Status: **Under Active Development**
+**SiteKicker** is yet another static site builder written in Python3(Python2 is not supported).
+
+Current Project Status: **Usable, but no testing and documentation**
 
 ## Todos
 
-- [ ] site status reporter
-- [ ] cached rebuild
-- [ ] support pages
-- [ ] Add unittest
-- [ ] sitemap
-- [ ] feed
-- [ ] toc
-- [ ] reStructuredText
-- [ ] latex
-- [ ] pandoc
-- [ ] site link checker
+- [ ] Add documentation
+- [ ] post-processor to process <a> internal cross-link <a href="id:entry-id-here">A Cross Link</a>, report when the cross-link is broken
+- [ ] add pagination support when it is needed
+- [ ] Entry ToC, header id with jQuery plugin
+- [ ] Add Unit Test And Integration Tests for the Project
+- [ ] Add continuous test with [TravisCI](https://travis-ci.org/) for Mac and Linux
+- [ ] Add continuous test with [Appvoyor](https://www.appveyor.com/) for Windows
 
-## Features
-
-- Built-in supports for common tools and services(code highlight, math formulas, siteamp, feed, toc and more), works out-of-box
-- Useful for both blogs and websites
-- Local live preview with real-time directory watch and incremental build
-- Support multiple formats like markdown, reStructuredText, latex etc
-- compile with external compilers of your choice, **pandoc** for example
-- Flexible to generate sites for various purposes(blog, static site, product documentation etc)
-- Built-in support for image compression and watermark
-- Site link monitor, find broken links easily
-- Works only with **Python3**
-
-## Recommended Directory structure
-```
-```
-
-## site.yml
+## sitekicker.yml
 ```yml
-# Name of the site, optional
+# Name of the site
 name: An Awesome Site
-# Base URL for the site, will be used to generate absolute urls, optional
-base: https://example.org
-# Generate absolute urls for all links, if set, base url must be set, default no, optional
-absolute_urls: no
+# Base URL for the site, will be used to generate absolute urls
+base_url: https://example.org
 # Directory where build output will be saved, could be relative path or absolute path
 output_dir: .dist
-# Directory that contains layout/templates, default: layout, optional
-layout_dir: layout
+# Directory that contains layout/templates, default: templates, optional, supported template format is jinja2
+template_dir: templates
 # Directories that will be copied, such as folders with assets or binary files
 copy_dirs:
   - assets
-# Options for site images processing
-image_options:
-  watermark:
-    - text: '@niminghao'
-      position: left top
-      transparency: 90%
-    - image: logo.png
-      position: right bottom
-      transparency: 90%
-  resize:
-    max-width: 3000px
-    max-height: 3000px
-  quantity: 90%
-# Directories that will be process, if not set, will process all directories
-# if set, will only process directories listed, optional
-content_dirs:
-  - pages
-  - movies
-  - books
-  - posts
-  - projects
 ```
 
-## meta.yml
+## folder.yml
 ```yml
 # The options set in this file will be applied to all entries inside the folder where this file is found,
 # we refer to these entries as 'affected items of this file' below.
@@ -96,13 +55,20 @@ tags:
 # options specified in meta.yml in parent folder, except 'prefix' and 'tags', the former will be concatenated,
 # the later will be merged
 
-# A unique id to identify the entry, no special chars, space will be substitued with hyphens, mandatory
+# A unique id to identify the entry, no special chars, space will be substitued with hyphens, optional
+# when not set, will try to use file name as id, will emit an error when it is not possible
 id: some-thing-as-name
-# Title of the entry
+# Title of the entry, mandatory, may contain any characters
 title: Sitekicker is another Static Site Generator
-# Date of the writting
+# Date of the writting, mandatory, in the format of YYYY-MM-DD
 date: 2016-10-20
+# Date of update, optional
+update_date: 2016-11-20
 # Tags that applies to this entry, optional
+# current entry will inherit all tags in its parent folders,
+# if folder 'a' contains tag 'a', folder 'a/b' contains tag 'b'
+# entry 'a/b/entry.md' contains tag 'c', then enventually the entry will
+# have there tags: 'a', 'b', 'c'
 tags:
   - tag1
   - tag2
