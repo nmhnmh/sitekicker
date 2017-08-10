@@ -28,18 +28,24 @@ def date_to_iso8601(value, format="%Y-%m-%dT%H:%M:%S%z"):
         raise Exception("Unknwon value type!")
 
 def xml_escape(value):
-    XML_CHARS = {
-        "<": '&lt;',
-        ">": '&gt;',
-        "'": '&apos;',
-        '"': '&quot;',
-        '&': '&amp;',
-    }
-    def sub(match):
-        return XML_CHARS.get(match)
-    return re.sub(r"[<>'\"&]", sub, str(value))
+    if not value:
+        return ''
+    else:
+        XML_CHARS = {
+            "<": '&lt;',
+            ">": '&gt;',
+            "'": '&apos;',
+            '"': '&quot;',
+            '&': '&amp;',
+        }
+        def sub(match):
+            return XML_CHARS.get(match)
+        return re.sub(r"[<>'\"&]", sub, str(value))
 
 def escape_quote(value):
     def sub(match):
         return r'\"'
-    return re.sub(r'"', sub, value)
+    if not value:
+        return ''
+    else:
+        return re.sub(r'"', sub, value)

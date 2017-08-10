@@ -39,11 +39,12 @@ def parse_command_line_options(arguments):
         dest="log_level",
         help="Set log level, default is warning"
     )
-    ap.add_argument('--no-parallel', action="store_true", default=False, help="Do not use parallel image processing, default is False")
-    ap.add_argument('--watch', '-w', action="store_true", default=False, help="Watch for changes and rebuild, default is false")
-    ap.add_argument('--full-build', '-f', action="store_true", default=False, help="Build everything from scratch, tend to be slow, default is false")
-    ap.add_argument('--version', '-V', action="version", version=sitekicker.version, help="Version number")
-    ap.add_argument('--port', '-p', default="8000", help="Local Preview Server Listen Port Number")
+    ap.add_argument('--no-parallel', action="store_true", default=False, help="Do not use parallel image processing, this will make build slower, default is False")
+    ap.add_argument('--serve', '-s', action="store_true", default=False, help="Serve the built contents with a local server for preview, default is False")
+    ap.add_argument('--watch', '-w', action="store_true", default=False, help="Watch for changes and rebuild, default is False")
+    ap.add_argument('--full-build', '-f', action="store_true", default=False, help="Build everything from scratch, ignore all caches, it would slow down the build, default is False")
+    ap.add_argument('--version', '-V', action="version", version=sitekicker.version, help="Show version number")
+    ap.add_argument('--port', '-p', default="8000", help="Default port for the local preview server to listen")
     ap.add_argument('--output-dir', '-o', default="", help="Directory to write build output")
     ap.add_argument("folder", nargs="?", default=".", help="Folder to process, default is current directory")
     argv_options = ap.parse_args(arguments)
@@ -60,6 +61,8 @@ def get_default_site_options():
         'content_dirs': [],
         'ignore_dirs': [],
         'copy_hidden': False,
+        'responsive_image_sizes': [500, 1000, 1500],
+        'image_placeholder_size': 48,
     })
 
 class dotdict(dict):

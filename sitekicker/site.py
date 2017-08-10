@@ -6,6 +6,7 @@ from .util import resolve_path, dotdict, get_default_site_options
 from .site_tasks import register_site_tasks
 from .entry.entry_tasks import register_entry_tasks
 from .site_watcher import watch_site
+from .site_server import serve
 
 SITE_HOOK_NAMES = [
     'pre-scan',
@@ -42,6 +43,8 @@ class Site:
         self.user_options = self.read_sitekicker_yml()
         # This is the derived options from user settings, cli options etc
         self.build_options = dotdict({})
+        self.build_options.update(self.default_options)
+        self.build_options.update(self.user_options)
         self.output_path = resolve_path(argv_options.output_dir or self.user_options.output_dir or '.dist')
         self.build_options.output_path = self.output_path
         self.build_options.working_path = self.working_path
@@ -109,7 +112,9 @@ class Site:
                 for handler in self.site_hooks[hook]:
                     handler(self)
 
-    def watch(self):
+    def watch(self, serve_site=False):
         """ Watch for changes inside the site folder, rebuild items that changed """
-        self.build()
-        watch_site(self)
+        watch_site(self, serve_site)
+
+    def serve(self):
+        serve(self)

@@ -6,6 +6,9 @@ from datetime import date
 from bs4 import BeautifulSoup
 import re
 import yaml
+import html
+
+from wand.image import Image as wandImage
 
 import sitekicker
 
@@ -121,18 +124,26 @@ def process_responsive_images_tags(entry):
         img = BeautifulSoup(img_text, 'html.parser').img
         attrs = img.attrs
         src = attrs.get('src')
-        if src.startswith('http://') or src.startswith('https://'):
+        alt = html.escape(attrs.get('alt') or src)
+        classes = attrs.get('class') or []
+        if src.startswith('http://') or src.startswith('https://') or src.startswith('//'):
             sub = '<img data-src="' + src + '" class="lazyload" />'
         else:
             alt = attrs.get('alt', '')
-            src_parts = src.rsplit(sep='.', maxsplit=2)
-            srcsets = []
-            for width in [384, 576, 768, 1152, 1536, 2304]:
-                srcsets.append(src_parts[0] + '-'+ str(width) +'px' + '.' + src_parts[1] + ' ' + str(width) + 'w')
-            srcset_text = ','.join(srcsets)
-            default_src = src_parts[0] + '-768px' + '.' + src_parts[1]
-            lqip_src = src_parts[0] + '-96px' + '.' + src_parts[1]
-            sub = '<img src="' + lqip_src + '" data-src="' + default_src + '" data-sizes="auto" data-srcset="' + srcset_text+ '" class="lazyload lqip-blur" />'
+            src_parts = src.rsplit(sep='.', maxsplit=1)
+            with wandImage(filename=os.path.join(entry.dir, src)) as im:
+                src_width, src_height = im.size
+                srcsets = []
+                for width in entry.site.build_options['responsive_image_sizes']:
+                    if src_width<width:
+                        srcsets.append(src_parts[0] + '-'+ str(src_width) +'px' + '.' + src_parts[1] + ' ' + str(src_width) + 'w')
+                        break
+                    else:
+                        srcsets.append(src_parts[0] + '-'+ str(width) +'px' + '.' + src_parts[1] + ' ' + str(width) + 'w')
+                srcset_text = ','.join(srcsets)
+                default_src = src_parts[0] + '-'+ str(entry.site.build_options['responsive_image_sizes'][1]) +'px' + '.' + src_parts[1]
+                lqip_src = src_parts[0] + '-'+ str(entry.site.build_options['image_placeholder_size']) +'px' + '.' + src_parts[1]
+                sub = '<img style="max-width: '+ str(src_width) +'px; max-height: '+ str(src_height) +'px;" src="' + lqip_src + '" data-src="' + default_src + '" data-sizes="auto" data-srcset="' + srcset_text+ '" class="lazyload lqip-blur '+ ' '.join(classes) +'" alt="'+ alt +'"/>'
         return sub
     entry.compile_output = re.sub(r'\<img\s+[^>]*\s*\>', sub_img, entry.compile_output)
 

@@ -20,6 +20,7 @@ class Entry:
         perm_link_parts = list(self.options.get('prefix', []))
         perm_link_parts.append(str(self.id))
         self.perm_link = site.user_options['base_url'] + '/' + "/".join(perm_link_parts)
+        self.link = '/' + "/".join(perm_link_parts)
         self.external_images = []
         self.linked_images = []
         self.inlined_files = []
