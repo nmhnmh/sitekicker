@@ -1,6 +1,8 @@
 import os
 import argparse
 import sitekicker
+import subprocess
+import re
 
 def resolve_path(path):
     path = os.path.expanduser(path)
@@ -105,3 +107,11 @@ class dotdict(dict):
     def update(self, *args, **kwargs):
         super(dotdict, self).update(*args, **kwargs)
         self._set_from_args(args, kwargs)
+
+def get_image_size(src):
+    im_raw_size = subprocess.check_output(['identify', src], encoding='utf8')
+    im_raw_size_match = re.search(r'\s(\d+)x(\d+)\s', im_raw_size)
+    if im_raw_size_match:
+        return int(im_raw_size_match.group(1)), int(im_raw_size_match.group(2))
+    else:
+        return 0, 0

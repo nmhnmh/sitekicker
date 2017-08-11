@@ -30,7 +30,6 @@ setup(
         'pymdown-extensions',
         'Jinja2',
         'watchdog',
-        'Wand',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

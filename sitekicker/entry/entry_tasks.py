@@ -8,13 +8,12 @@ import re
 import yaml
 import html
 
-from wand.image import Image as wandImage
-
 import sitekicker
 
 from .entry_dir import EntryDir
 from .entry_file import EntryFile
 from .entry_image import EntryImage
+from ..util import get_image_size
 
 def register_entry_tasks(site):
     site.register_entry('pre-compile', resolve_inlined_files)
@@ -131,19 +130,18 @@ def process_responsive_images_tags(entry):
         else:
             alt = attrs.get('alt', '')
             src_parts = src.rsplit(sep='.', maxsplit=1)
-            with wandImage(filename=os.path.join(entry.dir, src)) as im:
-                src_width, src_height = im.size
-                srcsets = []
-                for width in entry.site.build_options['responsive_image_sizes']:
-                    if src_width<width:
-                        srcsets.append(src_parts[0] + '-'+ str(src_width) +'px' + '.' + src_parts[1] + ' ' + str(src_width) + 'w')
-                        break
-                    else:
-                        srcsets.append(src_parts[0] + '-'+ str(width) +'px' + '.' + src_parts[1] + ' ' + str(width) + 'w')
-                srcset_text = ','.join(srcsets)
-                default_src = src_parts[0] + '-'+ str(entry.site.build_options['responsive_image_sizes'][1]) +'px' + '.' + src_parts[1]
-                lqip_src = src_parts[0] + '-'+ str(entry.site.build_options['image_placeholder_size']) +'px' + '.' + src_parts[1]
-                sub = '<img style="max-width: '+ str(src_width) +'px; max-height: '+ str(src_height) +'px;" src="' + lqip_src + '" data-src="' + default_src + '" data-sizes="auto" data-srcset="' + srcset_text+ '" class="lazyload lqip-blur '+ ' '.join(classes) +'" alt="'+ alt +'"/>'
+            src_width, src_height = get_image_size(os.path.join(entry.dir, src))
+            srcsets = []
+            for width in entry.site.build_options['responsive_image_sizes']:
+                if src_width<width:
+                    srcsets.append(src_parts[0] + '-'+ str(src_width) +'px' + '.' + src_parts[1] + ' ' + str(src_width) + 'w')
+                    break
+                else:
+                    srcsets.append(src_parts[0] + '-'+ str(width) +'px' + '.' + src_parts[1] + ' ' + str(width) + 'w')
+            srcset_text = ','.join(srcsets)
+            default_src = src_parts[0] + '-'+ str(entry.site.build_options['responsive_image_sizes'][1]) +'px' + '.' + src_parts[1]
+            lqip_src = src_parts[0] + '-'+ str(entry.site.build_options['image_placeholder_size']) +'px' + '.' + src_parts[1]
+            sub = '<img style="max-width: {max_width}px; max-height: {max_height}px;" src="{lqip_src}" data-src="{default_src}" data-sizes="auto" data-srcset="{src_set}" class="lazyload lqip-blur {classes}" alt="{alt}"/>'.format(max_width=str(src_width), max_height=str(src_height), lqip_src=lqip_src, default_src=default_src, src_set=srcset_text, alt=alt, classes=' '.join(classes))
         return sub
     entry.compile_output = re.sub(r'\<img\s+[^>]*\s*\>', sub_img, entry.compile_output)
 
