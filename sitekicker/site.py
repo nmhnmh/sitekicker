@@ -39,7 +39,9 @@ class Site:
         # Default options
         self.default_options = get_default_site_options()
         # This is the options from sitekicker.yml and command line options
-        self.user_options = self.read_sitekicker_yml()
+        user_options_dict = dict(self.default_options)
+        user_options_dict.update(self.read_sitekicker_yml())
+        self.user_options = dotdict(user_options_dict)
         # This is the derived options from user settings, cli options etc
         self.build_options = dotdict({})
         self.output_path = resolve_path(argv_options.output_dir or self.user_options.output_dir or '.dist')

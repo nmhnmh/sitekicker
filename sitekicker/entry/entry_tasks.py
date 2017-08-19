@@ -125,7 +125,7 @@ def process_responsive_images_tags(entry):
             sub = '<img data-src="' + src + '" class="lazyload" />'
         else:
             alt = attrs.get('alt', '')
-            src_parts = src.rsplit(sep='.', maxsplit=2)
+            src_parts = src.rsplit(sep='.', maxsplit=1)
             srcsets = []
             for width in [384, 576, 768, 1152, 1536, 2304]:
                 srcsets.append(src_parts[0] + '-'+ str(width) +'px' + '.' + src_parts[1] + ' ' + str(width) + 'w')
@@ -150,7 +150,7 @@ def link_entry(entry):
 
 def write_entry_output(entry):
     """ Save the final html output to file """
-    logging.error('Output path: %s', entry.output_path)
+    logging.info('Output path: %s', entry.output_path)
     if not os.path.isdir(entry.output_path):
         os.makedirs(entry.output_path)
     output_name = entry.options.get('output_name', 'index.html')

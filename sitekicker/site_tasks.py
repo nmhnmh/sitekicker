@@ -90,7 +90,7 @@ def scan_site_folders(site):
         items = os.scandir(path)
         for item in items:
             if item.is_file() and not item.name == 'folder.yml' and not item.name.startswith('.'):
-                logging.error("Skipping folder file: [%s]", item.path)
+                logging.warn("Skipping folder file: [%s]", item.path)
             elif not item.is_dir():
                 continue
             elif item.name.startswith('.'):
@@ -106,6 +106,9 @@ def scan_site_folders(site):
     site_dirs = os.scandir(site.working_path)
     for sdir in site_dirs:
         if sdir.is_dir() and not sdir.name.startswith('.'):
+            if sdir.name in site.user_options.ignore_dirs:
+                logging.warn("User ignore folder: %s", sdir.name)
+                continue
             if type(site.user_options.asset_dirs)==list and sdir.name in site.user_options.asset_dirs:
                 site.folders[sdir.path] = AssetFolder(site, sdir.path)
                 logging.info("Found New %s", site.folders[sdir.path])
