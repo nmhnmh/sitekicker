@@ -20,9 +20,20 @@ def main():
     logging.info("%s", site)
 
     if argv_options.watch:
-        site.watch()
+        site.build()
+        if argv_options.serve:
+            site.watch(True)
+        else:
+            site.watch()
     else:
         site.build()
+        if argv_options.serve:
+            try:
+                site.serve()
+            except KeyboardInterrupt:
+                print('exiting')
+            except e:
+                print(e)
 
 if __name__ == '__main__':
     try:
