@@ -63,6 +63,7 @@ def get_default_site_options():
         'content_dirs': [],
         'ignore_dirs': [],
         'copy_hidden': False,
+        'responsive_images': False,
         'responsive_image_sizes': [500, 1000, 1500],
         'image_placeholder_size': 48,
     })
