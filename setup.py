@@ -3,8 +3,8 @@ from setuptools import setup, find_packages
 
 import sitekicker
 
-if sys.version_info.major < 3:
-    raise RuntimeError('This package only supports Python 3!')
+if sys.version_info.major < 3 or sys.version_info.minor<5:
+    raise RuntimeError('This package only supports Python 3.5+!')
 
 setup(
     name='sitekicker',
@@ -35,10 +35,6 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.1',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Environment :: Console',
