@@ -14,8 +14,8 @@ class Entry:
         self.dir = os.path.dirname(path)
         self.read_entry_content()
         self.resolve_entry_options()
-        self.id = self.user_options.get('id') if self.user_options else None
-        self.date = self.user_options.get('date') if self.user_options else None
+        self.id = self.user_options.get('id')
+        self.date = self.user_options.get('date')
         self.mtime = os.path.getmtime(self.path)
         perm_link_parts = list(self.options.get('prefix', []))
         perm_link_parts.append(str(self.id))
@@ -25,6 +25,7 @@ class Entry:
         self.linked_images = []
         self.inlined_files = []
         self.linked_files = []
+        self.resolve_output_path()
 
     def __str__(self):
         return "Entry(%s): [%s]" % (self.id, self.path)
@@ -53,6 +54,13 @@ class Entry:
                 logging.debug("Entry read exception: %s", e)
                 self.user_options = {}
                 self.raw_content = ''
+
+    def resolve_output_path(self):
+        user_output_path = self.options.get('output_path', None)
+        if user_output_path is not None:
+            self.output_path = os.path.join(self.site.output_path, self.options.get('output_path'))
+        else:
+            self.output_path = os.path.join(self.site.output_path, *self.options.get('prefix', []), self.id)
 
     def resolve_entry_options(self):
         self.options = {}

@@ -57,15 +57,19 @@ def get_default_site_options():
         'name': "An Awesome Website",
         'base_url': '',
         'absolute_urls': False,
-        'template_dir': ['templates'],
+        'template_dir': 'templates',
         'output_dir': '.dist',
-        'copy_dirs': ['assets'],
+        'asset_dirs': ['assets'],
         'content_dirs': [],
         'ignore_dirs': [],
         'copy_hidden': False,
         'responsive_images': False,
         'responsive_image_sizes': [500, 1000, 1500],
         'image_placeholder_size': 48,
+        'image_placeholder_quality': 15,
+        'maximum_image_width': '1500',
+        'compress_image': True,
+        'compress_image_quality': 80
     })
 
 class dotdict(dict):

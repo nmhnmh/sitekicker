@@ -21,32 +21,35 @@ def register_site_tasks(site):
     site.register_site('pre-build', sort_entries_by_date)
     site.register_site('pre-build', group_entries_by_tag)
     site.register_site('build', build_site_entries)
-    site.register_site('post-build', dump_build_snapshot)
-    site.register_site('post-build', copy_assets)
-    site.register_site('pre-summary', end_building)
+    site.register_site('post-build', end_building)
+    site.register_site('pre-summary', dump_build_snapshot)
+    site.register_site('pre-summary', copy_assets)
     site.register_site('summary', summary)
 
 def summary(site):
+    site.end_build_time = time.time()
     print("%d seconds used to build!" % int(site.end_build_time - site.start_build_time))
 
 def start_building(site):
+    print(site)
     site.start_build_time = time.time()
 
 def end_building(site):
-    site.end_build_time = time.time()
+    # wait until all tasks are done
+    site.task_pool.close()
+    site.task_pool.join()
 
 def dump_build_snapshot(site):
     snpashot_path = os.path.join(site.output_path, '.snapshot')
     with open(snpashot_path, 'wt') as sf:
-        json.dump(site.snapshots, sf)
+        json.dump(site.snapshots.copy(), sf)
 
 def load_previous_build_snapshot(site):
-    if site.cli_options.full_build:
-        return
     snpashot_path = os.path.join(site.output_path, '.snapshot')
     if os.path.isfile(snpashot_path):
         with open(snpashot_path, 'rt') as sf:
-            site.snapshots = json.load(sf)
+            site.snapshots.clear()
+            site.snapshots.update(json.loads(sf.read() or '{}'))
 
 def copy_assets(site):
     for path, folder in site.folders.items():
@@ -54,6 +57,7 @@ def copy_assets(site):
             folder.copy()
 
 def build_site_entries(site):
+    print("{} entries found!".format(len(site.entries)))
     for eid, entry in site.entries.items():
         if entry.id and entry.date:
             logging.debug("Building %s", entry)
@@ -86,38 +90,38 @@ def convert_entry_folders(site):
 
 def scan_site_folders(site):
     def detect_folder(path):
-        logging.info("Detecting Folder: [%s]" % path)
+        logging.debug("Detecting Folder: [%s]" % path)
         items = os.scandir(path)
         for item in items:
             if item.is_file() and not item.name == 'folder.yml' and not item.name.startswith('.'):
-                logging.warn("Skipping folder file: [%s]", item.path)
+                logging.debug("Skipping folder file: [%s]", item.path)
             elif not item.is_dir():
                 continue
             elif item.name.startswith('.'):
-                logging.info("Skipping Folder: [%s]", item.path)
+                logging.debug("Skipping Folder: [%s]", item.path)
                 continue
             elif EntryFolder.is_entry_folder(item.path):
                 site.folders[item.path] = EntryFolder(site, item.path)
-                logging.info("Found New %s", site.folders[item.path])
+                logging.debug("Found New %s", site.folders[item.path])
             else:
                 site.folders[item.path] = EnclosureFolder(site, item.path)
-                logging.info("Found New %s", site.folders[item.path])
+                logging.debug("Found New %s", site.folders[item.path])
                 detect_folder(item.path)
     site_dirs = os.scandir(site.working_path)
     for sdir in site_dirs:
         if sdir.is_dir() and not sdir.name.startswith('.'):
-            if sdir.name in site.user_options.ignore_dirs:
+            if sdir.name in site.build_options.ignore_dirs:
                 logging.warn("User ignore folder: %s", sdir.name)
                 continue
-            if type(site.user_options.asset_dirs)==list and sdir.name in site.user_options.asset_dirs:
+            if type(site.build_options.asset_dirs)==list and sdir.name in site.build_options.asset_dirs:
                 site.folders[sdir.path] = AssetFolder(site, sdir.path)
-                logging.info("Found New %s", site.folders[sdir.path])
-            elif sdir.name == site.user_options.template_dir:
+                logging.debug("Found New %s", site.folders[sdir.path])
+            elif sdir.name == site.build_options.template_dir:
                 site.folders[sdir.path] = TemplateFolder(site, sdir.path)
-                logging.info("Found New %s", site.folders[sdir.path])
+                logging.debug("Found New %s", site.folders[sdir.path])
             else:
                 site.folders[sdir.path] = EnclosureFolder(site, sdir.path)
-                logging.info("Found New %s", site.folders[sdir.path])
+                logging.debug("Found New %s", site.folders[sdir.path])
                 detect_folder(sdir.path)
 
 def prepare_output_path(site):
@@ -131,19 +135,17 @@ def prepare_output_path(site):
 
 
 def load_templates(site):
-    if type(site.user_options.template_dir) == str:
-        template_dir = site.user_options.template_dir
-    else:
-        raise Exception("Invalid value for template_dir!")
-
-    full_template_path = os.path.join(site.working_path, template_dir)
+    template_dir = site.build_options['template_dir']
+    full_template_path = os.path.realpath(os.path.join(site.working_path, template_dir))
     logging.debug("Scanning template dir: [%s]" % full_template_path)
     site.template_registry = {}
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(full_template_path),
         trim_blocks=True,
         lstrip_blocks=True,
+        extensions=['jinja2.ext.i18n']
     )
+    env.install_null_translations()
     # Load Jinja2 Custom Filters
     from .jinja2_filters import xml_escape, date_to_rfc822, date_to_iso8601, escape_quote
     env.filters['xml_escape'] = xml_escape

@@ -1,6 +1,7 @@
 import os
 import yaml
 import time
+from multiprocessing import Pool, Manager
 
 from .util import resolve_path, dotdict, get_default_site_options
 from .site_tasks import register_site_tasks
@@ -59,7 +60,6 @@ class Site:
         self.entries = {}
         self.sorted_entries = []
         self.grouped_entries = {}
-        self.snapshots = {}
         # build hook registry
         self.site_hooks = {}
         self.entry_hooks = {}
@@ -70,6 +70,10 @@ class Site:
         # register site task
         register_site_tasks(self)
         register_entry_tasks(self)
+        # global task pool for parallel processing
+        self.task_pool = Pool()
+        self.task_pool_manager = Manager()
+        self.snapshots = self.task_pool_manager.dict()
 
     def reset(self):
         self.time = time.gmtime()
@@ -79,11 +83,10 @@ class Site:
         self.entries = {}
         self.sorted_entries = []
         self.grouped_entries = {}
-        self.snapshots = {}
+        self.snapshots = self.task_pool_manager.dict()
 
     def __str__(self):
         return "Site: [%s], output to [%s]" % (self.working_path, self.output_path)
-
 
     def read_sitekicker_yml(self):
         site_yml_path = os.path.join(self.working_path, 'sitekicker.yml')

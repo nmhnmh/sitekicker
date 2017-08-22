@@ -16,32 +16,36 @@ from .entry_image import EntryImage
 from ..util import get_image_size
 
 def register_entry_tasks(site):
+    site.register_entry('pre-compile', pre_summary)
     site.register_entry('pre-compile', resolve_inlined_files)
     site.register_entry('compile', compile_markdown)
     site.register_entry('post-compile', resolve_linked_file)
     site.register_entry('post-compile', resolve_all_images)
-    site.register_entry('post-compile', process_responsive_images_tags)
+    if site.build_options['responsive_images']:
+        site.register_entry('post-compile', process_responsive_images_tags)
     site.register_entry('post-compile', setup_meta_tags)
     site.register_entry('link', link_entry)
-    site.register_entry('pre-link', resolve_output_path)
     site.register_entry('post-link', write_entry_output)
     site.register_entry('post-link', copy_entry_files)
-    site.register_entry('post-link', process_entry_images)
+    if site.build_options['responsive_images']:
+        site.register_entry('post-link', process_responsive_entry_images)
+    else:
+        site.register_entry('post-link', copy_entry_images)
+
+def pre_summary(entry):
+    print(entry)
+
+def copy_entry_images(entry):
+    for img in entry.linked_images:
+        img.copy()
 
 def copy_entry_files(entry):
     for fi in entry.linked_files:
         fi.copy()
 
-def process_entry_images(entry):
+def process_responsive_entry_images(entry):
     for img in entry.linked_images:
-        img.process()
-
-def resolve_output_path(entry):
-    user_output_path = entry.options.get('output_path', None)
-    if user_output_path is not None:
-        entry.output_path = os.path.join(entry.site.output_path, entry.options.get('output_path'))
-    else:
-        entry.output_path = os.path.join(entry.site.output_path, *entry.options.get('prefix', []), entry.id)
+        img.responsive_process()
 
 def resolve_inlined_files(entry):
     """ Inlined files must be read and insert to its anchor point, before compilation """
@@ -63,10 +67,11 @@ def compile_markdown(entry):
         entry.raw_content,
         extensions=[
             'markdown.extensions.extra',
-            'pymdownx.github',
-            #'markdown.extensions.codehilite',
+            'pymdownx.tilde',
+            'pymdownx.magiclink',
             'pymdownx.arithmatex',
-        ]
+        ],
+        output_format="html5"
     )
     entry.compile_output = md_out
 
@@ -78,8 +83,12 @@ def setup_meta_tags(entry):
     # Detect Images
     if entry.external_images or entry.linked_images:
         entry.options['meta_tags'].add('image')
+        if re.search(r'srcset', entry.compile_output):
+            entry.options['meta_tags'].add('responsive-image')
+        if re.search(r'lazyload', entry.compile_output):
+            entry.options['meta_tags'].add('lazyload-image')
     # Detect Code Blocks
-    if re.search(r'\<code[^>]*>', entry.compile_output):
+    if re.search(r'\<code[^>]*>', entry.compile_output) or re.search(r'\<pre[^>]*>', entry.compile_output):
         entry.options['meta_tags'].add('code')
 
 def resolve_linked_file(entry):
@@ -89,15 +98,12 @@ def resolve_linked_file(entry):
         link_text = link_match.group(0)
         link = BeautifulSoup(link_text, 'html.parser').a
         attrs = link.attrs
-        src = attrs.get('href')
-        if src.startswith('http://') or src.startswith('https://'):
+        href = attrs.get('href')
+        title = link.string
+        if href.startswith('http://') or href.startswith('https://') or href.startswith('//'):
             pass
         else:
-            fullpath = os.path.join(entry.dir, src)
-            if os.path.isfile(fullpath):
-                entry.linked_files.append(EntryFile(entry, fullpath))
-            else:
-                pass
+            entry.linked_files.append(EntryFile(entry, title, href))
     re.sub(r'\<a\s+[^>]*\s*\>([^<]+)</a>', tap_link, entry.compile_output)
 
 def resolve_all_images(entry):
@@ -108,12 +114,12 @@ def resolve_all_images(entry):
         img_text = image_match.group(0)
         img = BeautifulSoup(img_text, 'html.parser').img
         attrs = img.attrs
-        src = attrs.get('src')
-        if src.startswith('http://') or src.startswith('https://'):
-            entry.external_images.append(src)
+        title = attrs.get('alt') or ''
+        name = attrs.get('src')
+        if name.startswith('http://') or name.startswith('https://') or name.startswith('//'):
+            entry.external_images.append(name)
         else:
-            fullpath = os.path.join(entry.dir, src)
-            entry.linked_images.append(EntryImage(entry, fullpath))
+            entry.linked_images.append(EntryImage(entry, title, name))
     re.sub(r'\<img\s+[^>]*\s*\>', sub_img, entry.compile_output)
 
 def process_responsive_images_tags(entry):
@@ -147,7 +153,10 @@ def process_responsive_images_tags(entry):
 
 def link_entry(entry):
     """ Link entry content with header, footer to get the final html output for the entry """
-    page_template = entry.site.template_registry.get(entry.options.get('layout', 'default')+'.j2')
+    entry_template_name = entry.options.get('layout', 'default')+'.j2'
+    page_template = entry.site.template_registry.get(entry_template_name)
+    if not page_template:
+        raise Exception("Entry[{}] using invalid template: [{}]".format(entry.id, entry_template_name))
     template_data = {
         'entry_content': entry.compile_output,
         'site': entry.site,
@@ -159,11 +168,11 @@ def link_entry(entry):
 
 def write_entry_output(entry):
     """ Save the final html output to file """
-    logging.info('Output path: %s', entry.output_path)
+    logging.debug('Output path: %s', entry.output_path)
     if not os.path.isdir(entry.output_path):
         os.makedirs(entry.output_path)
     output_name = entry.options.get('output_name', 'index.html')
     output_path = os.path.join(entry.output_path, output_name)
     with open(output_path, 'w') as of:
-        logging.info("Writing built html to: %s", output_path)
+        logging.debug("Writing built html to: %s", output_path)
         of.write(entry.html_output)

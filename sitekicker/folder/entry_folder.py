@@ -38,12 +38,15 @@ class EntryFolder:
     def detect_file_content(path):
         """ Check if a file is valid entry file, by check its front matter """
         with open(path, 'r') as mf:
-            all_lines = mf.readlines()
+            all_lines = ''.join(mf.readlines())
             try:
-                first_line_index = all_lines.index("---\n", 0)
-                second_line_index = all_lines.index("---\n", 1)
-                # meta_data_str = ''.join(all_lines[first_line_index+1:second_line_index])
-                # raw_content = ''.join(all_lines[second_line_index+1:])
+                # valid entry must have valid "front matter" block(options block)
+                start_index = all_lines.index("---\n", 0)
+                end_index = all_lines.index("---\n", 4)
+                # valid entry must have id, title
+                all_lines.index("\nid: ", start_index, end_index)
+                all_lines.index("\ntitle: ", start_index, end_index)
+                # all_lines.index("\ndate: ", start_index, end_index)
             except Exception:
                 return False
             else:
