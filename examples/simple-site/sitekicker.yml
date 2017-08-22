@@ -1,1 +1,4 @@
-name: Simple Site
+name: sitekicker
+base_url: http://sitekicker.github.io
+output_dir: '.build'
+

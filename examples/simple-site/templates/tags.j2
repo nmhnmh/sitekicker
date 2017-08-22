@@ -1,0 +1,21 @@
+{% extends "default.j2" %}
+
+{% block content %}
+  {% for tag, entries in site.grouped_entries.items() %}
+    <div class="index_entry">
+      <h2 id="{{tag}}">{{ tag }}</h2>
+      <ul>
+      {% for entry in entries %}
+        {% if not entry.options['type'] in ['page', 'hidden'] %}
+        <li>
+          <a class="" href="{{ entry.link }}">
+          {{ entry.options['title'] }}
+          </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+{% endblock %}
+

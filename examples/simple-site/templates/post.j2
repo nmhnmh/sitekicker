@@ -1,0 +1,28 @@
+{% extends "default.j2" %}
+
+{% block title %}
+<title>Post: {{ title }}</title>
+{% endblock %}
+
+{% block content %}
+  <div class="" id="entry_header">
+    <span class="entry_title">{{ title }}</span>
+    <div class="entry_info">
+      {{ date.strftime('%b %d, %Y') }}
+    </div>
+    {% if summary %}
+    <div class="entry_summary">
+    {{ summary }}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="content_wrapper">
+    {{ entry_content }}
+    <br>
+    <strong>Tags: </strong>
+    {% for t in tags %}
+      <a href="/tags#{{ t }}" class="entry_tag"> {{ t }} </a>
+    {% endfor %}
+  </div>
+{% endblock %}

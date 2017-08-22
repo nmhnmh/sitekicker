@@ -1,0 +1,20 @@
+{% extends "default.j2" %}
+
+{% block content %}
+  {% for entry in site.sorted_entries %}
+  {% if entry.options['type'] not in ['page'] %}
+  <div class="index_entry">
+    <a class="index_entry_title" href="{{ entry.link }}">
+    {{ entry.options['title'] }}
+    </a>
+    <div class="index_entry_info">
+        {{ entry.options['date'].strftime('%b %d %Y') }}
+        {% for t in entry.options['tags'] %}
+        <a class="index_entry_tag" href="/tags#{{t}}">{{ t }}</a>
+        {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+{% endblock %}
+
