@@ -2,6 +2,7 @@ import os
 import yaml
 import time
 from multiprocessing import Pool, Manager
+import collections
 
 from .util import resolve_path, dotdict, get_default_site_options
 from .site_tasks import register_site_tasks
@@ -61,8 +62,8 @@ class Site:
         self.sorted_entries = []
         self.grouped_entries = {}
         # build hook registry
-        self.site_hooks = {}
-        self.entry_hooks = {}
+        self.site_hooks = collections.OrderedDict()
+        self.entry_hooks = collections.OrderedDict()
         for hook in SITE_HOOK_NAMES:
             self.site_hooks[hook] = []
         for hook in ENTRY_HOOK_NAMES:
