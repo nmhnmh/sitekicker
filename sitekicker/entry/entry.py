@@ -43,7 +43,7 @@ class Entry:
         return self.date < other.date
 
     def read_entry_content(self):
-        with open(self.path, 'r') as mf:
+        with open(self.path, 'rt', encoding='utf8') as mf:
             all_lines = mf.readlines()
             try:
                 first_line_index = all_lines.index("---\n", 0)

@@ -91,7 +91,7 @@ class Site:
     def read_sitekicker_yml(self):
         site_yml_path = os.path.join(self.working_path, 'sitekicker.yml')
         if os.path.isfile(site_yml_path):
-            with open(site_yml_path, 'r') as site_config:
+            with open(site_yml_path, 'rt', encoding='utf8') as site_config:
                 user_options = dotdict(yaml.load(site_config))
                 return user_options
         else:
