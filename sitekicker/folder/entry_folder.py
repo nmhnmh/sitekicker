@@ -37,7 +37,7 @@ class EntryFolder:
     @staticmethod
     def detect_file_content(path):
         """ Check if a file is valid entry file, by check its front matter """
-        with open(path, 'r') as mf:
+        with open(path, 'rt', encoding='utf8') as mf:
             all_lines = ''.join(mf.readlines())
             try:
                 # valid entry must have valid "front matter" block(options block)
