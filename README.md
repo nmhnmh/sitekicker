@@ -1,16 +1,29 @@
+[![TravisCI Build Status](https://travis-ci.org/nmhnmh/sitekicker.svg)](https://travis-ci.org/nmhnmh/sitekicker)
+
 This is my **personal** static site generator, it lacks testings and documents at the moment.
 If you need a static site generator, find one [here](https://www.staticgen.com/) with good community support.
 
-**SiteKicker** is yet another static site builder written in Python3(Python2 is not supported).
+**SiteKicker** is yet another static site builder written in Python3.
 
 Current Project Status: **Usable, but no testing and documentation**
 
-## Todos
+## Feature Todos
+
+- [ ] Flow chart, sequence chart support
+- [ ] Fix incremental build
+- [ ] Trigger page reload when page changed(use websocket)
+- [ ] post-processor to process <a> internal cross-link <a href="id:entry-id-here">A Cross Link</a>, report when the cross-link is broken
+- [ ] add pagination support
+- [ ] Generate ToC, add perm link to headers
+- [ ] More robust error handling and reporting
+
+# Documentation Todos
 
 - [ ] Add documentation
-- [ ] post-processor to process <a> internal cross-link <a href="id:entry-id-here">A Cross Link</a>, report when the cross-link is broken
-- [ ] add pagination support when it is needed
-- [ ] Entry ToC, header id with jQuery plugin
+- [ ] Setup home page with Github Pages
+
+## Test Todos
+
 - [ ] Add Unit Test And Integration Tests for the Project
 - [ ] Add continuous test with [TravisCI](https://travis-ci.org/) for Mac and Linux
 - [ ] Add continuous test with [Appvoyor](https://www.appveyor.com/) for Windows
