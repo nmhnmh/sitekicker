@@ -15,4 +15,4 @@ RUN pip3 install -e /sitekicker
 # setup working dir
 WORKDIR /source
 
-ENTRYPOINT ["sitekicker"]
+CMD ["sitekicker"]
