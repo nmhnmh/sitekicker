@@ -3,6 +3,7 @@ import logging
 import jinja2
 import json
 import time
+import collections
 
 from .entry.entry_template import EntryTemplate
 
@@ -41,15 +42,25 @@ def end_building(site):
 
 def dump_build_snapshot(site):
     snpashot_path = os.path.join(site.output_path, '.snapshot')
-    with open(snpashot_path, 'wt') as sf:
-        json.dump(site.snapshots.copy(), sf)
+    # manually dump to json to make the output predictable
+    with open(snpashot_path, 'wt', encoding='utf8') as sf:
+        ordered_data = collections.OrderedDict(sorted(site.snapshots.items(), key=lambda e: e[0]))
+        sf.write('{\n')
+        for k, v in ordered_data.items():
+            sf.write('  {}:{},\n'.format(json.dumps(k), json.dumps(v)))
+        sf.write('"":""')
+        sf.write('\n}')
 
 def load_previous_build_snapshot(site):
     snpashot_path = os.path.join(site.output_path, '.snapshot')
     if os.path.isfile(snpashot_path):
-        with open(snpashot_path, 'rt') as sf:
+        with open(snpashot_path, 'rt', encoding="utf8") as sf:
             site.snapshots.clear()
-            site.snapshots.update(json.loads(sf.read() or '{}'))
+            try:
+                data = json.loads(sf.read())
+            except:
+                data = {}
+            site.snapshots.update(data)
 
 def copy_assets(site):
     for path, folder in site.folders.items():
