@@ -16,7 +16,7 @@ class EnclosureFolder:
     def read_folder_options(self):
         folder_yml_path = os.path.join(self.path, 'folder.yml')
         if os.path.isfile(folder_yml_path):
-            with open(folder_yml_path, 'r', encodig='utf8') as folder_config:
+            with open(folder_yml_path, 'r', encoding='utf8') as folder_config:
                 return yaml.load(folder_config) or {}
         else:
             return {}
