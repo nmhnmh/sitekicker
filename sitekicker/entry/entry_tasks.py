@@ -55,7 +55,7 @@ def resolve_inlined_files(entry):
         fullpath = os.path.join(entry.dir, name)
         entry.inlined_files.append(fullpath)
         logging.debug("Find inlined file: [%s]", fullpath)
-        with open(fullpath, 'r') as f:
+        with open(fullpath, 'rt', encoding="utf8") as f:
             return f.read()
     raw_content = entry.raw_content
     # read and insert file content for [[file: filename]] tags before build
@@ -173,6 +173,6 @@ def write_entry_output(entry):
         os.makedirs(entry.output_path)
     output_name = entry.options.get('output_name', 'index.html')
     output_path = os.path.join(entry.output_path, output_name)
-    with open(output_path, 'w') as of:
+    with open(output_path, 'wt', encoding="utf8") as of:
         logging.debug("Writing built html to: %s", output_path)
         of.write(entry.html_output)
