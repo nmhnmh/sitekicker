@@ -6,6 +6,11 @@ RUN apt-get update -y && apt-get install --no-install-recommends -y -q curl pyth
 # prepare dirs
 RUN mkdir /sitekicker && mkdir /source
 
+# setup env
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+
 # copy sitekicker code
 COPY . /sitekicker
 
