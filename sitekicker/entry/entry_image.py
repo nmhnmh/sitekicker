@@ -14,12 +14,12 @@ def compress_resize_image(src, dest, target_width, quality=80, caches=None, full
         src in caches and
         os.path.getmtime(src) == caches[src] and
         dest in caches and
+        os.path.isfile(dest) and
         os.path.getmtime(dest) == caches[dest] and
         options_cache_key in caches and
         options_cache_value == caches[options_cache_key]
     )
     if caches is not None and not full_build and cache_hit:
-        print("Cache hit for {}!".format(src))
         logging.debug("Cache hit for {}!".format(src))
         return
     logging.debug("IM Resize and Compress image from {} to {}, target_width: {}px, qulity: {}%".format(src, dest, target_width, quality))

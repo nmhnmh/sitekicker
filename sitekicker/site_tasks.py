@@ -5,8 +5,8 @@ import json
 import time
 import collections
 
+from .util import check_is_ignored
 from .entry.entry_template import EntryTemplate
-
 from .folder.enclosure_folder import EnclosureFolder
 from .folder.template_folder import TemplateFolder
 from .folder.asset_folder import AssetFolder
@@ -27,13 +27,13 @@ def register_site_tasks(site):
     site.register_site('pre-summary', copy_assets)
     site.register_site('summary', summary)
 
-def summary(site):
-    site.end_build_time = time.time()
-    print("%d seconds used to build!" % int(site.end_build_time - site.start_build_time))
-
 def start_building(site):
     print(site)
     site.start_build_time = time.time()
+
+def summary(site):
+    site.end_build_time = time.time()
+    print("%d seconds used to build!" % int(site.end_build_time - site.start_build_time))
 
 def end_building(site):
     # wait until all tasks are done
@@ -104,6 +104,9 @@ def scan_site_folders(site):
         logging.debug("Detecting Folder: [%s]" % path)
         items = os.scandir(path)
         for item in items:
+            if item.is_dir() and check_is_ignored(site.build_options['ignore_dirs'], item.path):
+                logging.warn("User ignore folder: %s", item.path)
+                continue
             if item.is_file() and not item.name == 'folder.yml' and not item.name.startswith('.'):
                 logging.debug("Skipping folder file: [%s]", item.path)
             elif not item.is_dir():
@@ -120,10 +123,10 @@ def scan_site_folders(site):
                 detect_folder(item.path)
     site_dirs = os.scandir(site.working_path)
     for sdir in site_dirs:
+        if check_is_ignored(site.build_options['ignore_dirs'], sdir.path):
+            logging.warn("User ignore folder: %s", sdir.name)
+            continue
         if sdir.is_dir() and not sdir.name.startswith('.'):
-            if sdir.name in site.build_options.ignore_dirs:
-                logging.warn("User ignore folder: %s", sdir.name)
-                continue
             if type(site.build_options.asset_dirs)==list and sdir.name in site.build_options.asset_dirs:
                 site.folders[sdir.path] = AssetFolder(site, sdir.path)
                 logging.debug("Found New %s", site.folders[sdir.path])

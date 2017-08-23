@@ -16,7 +16,6 @@ from .entry_image import EntryImage
 from ..util import get_image_size
 
 def register_entry_tasks(site):
-    site.register_entry('pre-compile', pre_summary)
     site.register_entry('pre-compile', resolve_inlined_files)
     site.register_entry('compile', compile_markdown)
     site.register_entry('post-compile', resolve_linked_file)
@@ -31,8 +30,9 @@ def register_entry_tasks(site):
         site.register_entry('post-link', process_responsive_entry_images)
     else:
         site.register_entry('post-link', copy_entry_images)
+    site.register_entry('post-link', summary)
 
-def pre_summary(entry):
+def summary(entry):
     print(entry)
 
 def copy_entry_images(entry):

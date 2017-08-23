@@ -28,7 +28,7 @@ class Entry:
         self.resolve_output_path()
 
     def __str__(self):
-        return "Entry(%s): [%s]" % (self.id, self.path)
+        return "Entry(%s): [%s], %d images, %d external images, %d files, %d inlined files." % (self.id, self.path, len(self.linked_images), len(self.external_images), len(self.linked_files), len(self.inlined_files))
 
     def __repr__(self):
         return self.__str__()

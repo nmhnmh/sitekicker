@@ -9,6 +9,14 @@ def resolve_path(path):
     return os.path.abspath(path)
 
 
+def check_is_ignored(patterns, path):
+    if not patterns:
+        return False
+    for p in patterns:
+        if re.search(p, path) is not None:
+            return True
+    return False
+
 def remove_list_duplicate(lst):
     """ Remove duplicate from a list, maintain original order """
     seen = set()
