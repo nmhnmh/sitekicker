@@ -10,22 +10,26 @@ services:
   - docker
 
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get -qq install -y --no-install-recommends curl python3 python3-pip python3-setuptools git ca-certificates imagemagick
-  - pip3 install -e .
+  #- sudo apt-get -qq update
+  #- sudo apt-get -qq install -y --no-install-recommends curl python3 python3-pip python3-setuptools git ca-certificates imagemagick
+  #- pip3 install -e .
+  - docker build -t nmhnmh/sitekicker:latest .
 
 script:
-  - pushd examples/simple-site
-  - sitekicker
-  - popd
+  #- pushd examples/simple-site
+  #- sitekicker
+  #- popd
+  - docker run --rm -t -i -v "$TRAVIS_BUILD_DIR:/source" nmhnmh/sitekicker:latest
 
 jobs:
   include:
     - stage: deploy
       python: 3.6
       script:
-        - docker build -t nmhnmh/sitekicker:latest .
         - if [ "$TRAVIS_BRANCH" == "master" ]; then
+          docker build -t nmhnmh/sitekicker:latest .
           docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
           docker push nmhnmh/sitekicker:latest;
+          else
+          echo 'Only Deploy Master Branch!'
           fi
