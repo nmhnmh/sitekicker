@@ -12,9 +12,9 @@ services:
 before_install:
   - export IMAGE_NAME="$TRAVIS_REPO_SLUG"
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      export IMAGE_TAG_NAME=latest
+      export IMAGE_TAG_NAME=latest;
     elif [ -n "$TRAVIS_TAG" ]; then
-      export IMAGE_TAG_NAME="$TRAVIS_TAG"
+      export IMAGE_TAG_NAME="$TRAVIS_TAG";
     fi
   - docker build -t "$IMAGE_NAME:$IMAGE_TAG_NAME" .
 
@@ -27,11 +27,11 @@ jobs:
       python: 3.6
       script:
         - if [ "$TRAVIS_BRANCH" == "master" ]; then
-            docker build -t $TRAVIS_REPO_SLUG:latest .
-            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-            docker push $TRAVIS_REPO_SLUG:latest
+            docker build -t $TRAVIS_REPO_SLUG:latest . ;
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" ;
+            docker push $TRAVIS_REPO_SLUG:latest ;
           elif [ "$TRAVIS_TAG" ]; then
-            docker build -t $TRAVIS_REPO_SLUG:$TRAVIS_TAG .
-            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-            docker push $TRAVIS_REPO_SLUG:$TRAVIS_TAG
+            docker build -t $TRAVIS_REPO_SLUG:$TRAVIS_TAG . ;
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" ;
+            docker push $TRAVIS_REPO_SLUG:$TRAVIS_TAG ;
           fi
