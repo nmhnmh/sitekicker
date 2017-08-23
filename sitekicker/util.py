@@ -114,8 +114,8 @@ class dotdict(dict):
         self._set_from_args(args, kwargs)
 
 def get_image_size(src):
-    im_raw_size = subprocess.check_output(['identify', src], encoding='utf8')
-    im_raw_size_match = re.search(r'\s(\d+)x(\d+)\s', im_raw_size)
+    im_raw_size = subprocess.check_output(['identify', src])
+    im_raw_size_match = re.search(r'\s(\d+)x(\d+)\s', im_raw_size.decode('utf8') if im_raw_size else '')
     if im_raw_size_match:
         return int(im_raw_size_match.group(1)), int(im_raw_size_match.group(2))
     else:
