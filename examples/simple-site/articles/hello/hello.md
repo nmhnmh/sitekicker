@@ -9,3 +9,5 @@ tags:
 ---
 
 Hello SiteKicker
+
+![Hello](5k_1024.jpg)
