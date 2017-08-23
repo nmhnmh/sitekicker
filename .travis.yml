@@ -20,6 +20,9 @@ before_install:
 
 script:
   - docker run --rm -t -i -v "$TRAVIS_BUILD_DIR/examples/simple-site:/source" "$IMAGE_NAME:$IMAGE_TAG_NAME"
+  - docker run --rm -t -i -v "$TRAVIS_BUILD_DIR/examples/simple-site:/source" "$IMAGE_NAME:$IMAGE_TAG_NAME" sitekicker --full-build
+  - docker run --rm -t -i -v "$TRAVIS_BUILD_DIR/examples/simple-site:/source" "$IMAGE_NAME:$IMAGE_TAG_NAME" sitekicker --no-parallel
+  - docker run --rm -t -i -v "$TRAVIS_BUILD_DIR/examples/simple-site:/source" "$IMAGE_NAME:$IMAGE_TAG_NAME" sitekicker --full-build  --no-parallel
 
 jobs:
   include:
