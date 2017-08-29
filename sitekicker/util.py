@@ -8,7 +8,6 @@ def resolve_path(path):
     path = os.path.expanduser(path)
     return os.path.abspath(path)
 
-
 def check_is_ignored(patterns, path):
     if not patterns:
         return False

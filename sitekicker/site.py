@@ -84,6 +84,7 @@ class Site:
         self.entries = {}
         self.sorted_entries = []
         self.grouped_entries = {}
+        self.task_pool = Pool()
         self.snapshots = self.task_pool_manager.dict()
 
     def __str__(self):
