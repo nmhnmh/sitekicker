@@ -37,11 +37,13 @@ def summary(entry):
 
 def copy_entry_images(entry):
     for img in entry.linked_images:
-        img.copy()
+        if not img.is_external:
+            img.copy()
 
 def copy_entry_files(entry):
     for fi in entry.linked_files:
-        fi.copy()
+        if not fi.is_external:
+            fi.copy()
 
 def process_responsive_entry_images(entry):
     for img in entry.linked_images:
@@ -115,7 +117,7 @@ def resolve_all_images(entry):
         img = BeautifulSoup(img_text, 'html.parser').img
         attrs = img.attrs
         title = attrs.get('alt') or ''
-        name = attrs.get('src')
+        name = attrs.get('src') or attrs.get('data-src')
         if name.startswith('http://') or name.startswith('https://') or name.startswith('//'):
             entry.external_images.append(name)
         else:
@@ -128,7 +130,7 @@ def process_responsive_images_tags(entry):
         img_text = image_match.group(0)
         img = BeautifulSoup(img_text, 'html.parser').img
         attrs = img.attrs
-        src = attrs.get('src')
+        src = attrs.get('src') or attrs.get('data-src')
         alt = html.escape(attrs.get('alt') or src)
         classes = attrs.get('class') or []
         if src.startswith('http://') or src.startswith('https://') or src.startswith('//'):

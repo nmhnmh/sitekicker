@@ -40,13 +40,13 @@ def compress_resize_image(src, dest, target_width, quality=80, caches=None, full
 class EntryImage(EntryFile):
     def __init__(self, entry, title, name):
         super().__init__(entry, title, name)
-        self.real_width, self.real_height = get_image_size(self.fullpath)
+        self.real_width, self.real_height = get_image_size(self.fullpath) if not self.is_external else 0, 0
         matches = re.match(r'(.+)\.([^\.]+)', self.name)
         self.name_no_ext = matches.group(1) if matches else ''
         self.ext = matches.group(2) if matches else ''
 
     def check_file(self):
-        if not os.path.isfile(self.fullpath):
+        if not self.is_external and not os.path.isfile(self.fullpath):
             raise Exception("Post [{} > {}] referencing a non-exist local image [{}]!".format(self.entry.id, self.title, self.name))
 
     def __str__(self):
