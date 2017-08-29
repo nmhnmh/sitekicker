@@ -10,10 +10,13 @@ class EntryFile:
         self.name = name
         self.fullpath = os.path.realpath(os.path.join(entry.dir, name))
         self.dest_fullpath = os.path.join(entry.output_path, self.fullpath[len(self.entry.dir)+1:])
+        self.is_external=True
+        if os.path.samefile(os.path.commonpath([self.fullpath, entry.path]), entry.path):
+            self.is_external=False
         self.check_file()
 
     def check_file(self):
-        if not os.path.isfile(self.fullpath):
+        if not self.is_external and not os.path.isfile(self.fullpath):
             raise Exception("Post [{} > {}] referencing a non-exist local file: [{}]!".format(self.entry.id, self.title, self.name))
 
     def __str__(self):
