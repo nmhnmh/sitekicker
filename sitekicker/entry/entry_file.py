@@ -11,18 +11,22 @@ class EntryFile:
         self.fullpath = os.path.realpath(os.path.join(entry.dir, name))
         self.dest_fullpath = os.path.join(entry.output_path, self.fullpath[len(self.entry.dir)+1:])
         self.is_external=True
-        if os.path.samefile(os.path.commonpath([self.fullpath, entry.path]), entry.path):
+        self.file_exists=True
+        if os.path.samefile(os.path.commonpath([self.fullpath, entry.dir]), entry.dir):
             self.is_external=False
         self.check_file()
 
     def check_file(self):
         if not self.is_external and not os.path.isfile(self.fullpath):
-            raise Exception("Post [{} > {}] referencing a non-exist local file: [{}]!".format(self.entry.id, self.title, self.name))
+            self.file_exists=False
+            logging.warning("Post [{} > {}] referencing a non-exist local file: [{}]!".format(self.entry.id, self.title, self.name))
 
     def __str__(self):
         return "Entry file: %s" % self.fullpath
 
     def copy(self):
+        if not self.file_exists:
+            return
         dest_dir = os.path.dirname(self.dest_fullpath)
         logging.debug("Copy entry file from %s to %s" % (self.fullpath, self.dest_fullpath))
         if not os.path.isdir(dest_dir):

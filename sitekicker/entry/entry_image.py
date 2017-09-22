@@ -47,6 +47,7 @@ class EntryImage(EntryFile):
 
     def check_file(self):
         if not self.is_external and not os.path.isfile(self.fullpath):
+            self.file_exists=False
             raise Exception("Post [{} > {}] referencing a non-exist local image [{}]!".format(self.entry.id, self.title, self.name))
 
     def __str__(self):

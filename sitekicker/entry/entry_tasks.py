@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import re
 import yaml
 import html
+import jinja2
 
 import sitekicker
 
@@ -158,11 +159,15 @@ def link_entry(entry):
     entry_template_name = entry.options.get('layout', 'default')+'.j2'
     page_template = entry.site.template_registry.get(entry_template_name)
     if not page_template:
-        raise Exception("Entry[{}] using invalid template: [{}]".format(entry.id, entry_template_name))
+        if entry_template_name=='default.j2':
+            page_template=jinja2.Template('{{ content }}')
+        else:
+            raise Exception("Entry[{}] using invalid template: [{}]".format(entry.id, entry_template_name))
     template_data = {
-        'entry_content': entry.compile_output,
-        'site': entry.site,
         'sitekicker': sitekicker,
+        'site': entry.site,
+        'entry': entry,
+        'entry_content': entry.compile_output,
         'perm_link': entry.perm_link,
     }
     template_data.update(entry.options)
