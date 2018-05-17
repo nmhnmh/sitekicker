@@ -2,6 +2,7 @@ FROM ubuntu:16.04
 
 # Install updates and dependencies
 RUN apt-get update -y && apt-get install --no-install-recommends -y -q curl python3 python3-pip python3-setuptools git ca-certificates imagemagick locales && apt-get clean && rm /var/lib/apt/lists/*_*
+RUN pip3 install -U setuptools pip
 
 # prepare dirs
 RUN mkdir /sitekicker && mkdir /source
