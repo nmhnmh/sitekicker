@@ -5,7 +5,7 @@ If you need a static site generator, find one [here](https://www.staticgen.com/)
 
 **SiteKicker** is yet another static site builder written in Python3.
 
-Current Project Status: **Usable, but no testing and documentation**
+Current Project Status: **Beta, usable, but no testing and documentation**
 
 ## Feature Todos
 

@@ -1,6 +1,1 @@
-version = '1.0'
-author = 'Minghao Ni'
-email = 'niminghao804@gmail.com'
-description = 'Generate and build a static website'
-url = 'https://github.com/nmhnmh/site-kicker'
-license = 'MIT'
+version = '1.0.2'
