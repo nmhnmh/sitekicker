@@ -3,14 +3,27 @@ name: build and deploy
 on:
   push:
     branches:
-    - master
+      - master
 
 jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+
+      - name: build image
+        env:
+          DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/sitekicker:latest
+        run: |
+          docker build . --file Dockerfile --tag ${DOCKER_IMAGE} ||
+          (echo -e "\e[31m[${GITHUB_WORKFLOW}] failed to build\e[m" && exit 1)
+
   lint:
     runs-on: macOS-10.14
     steps:
-    - uses: actions/checkout@master
-    - name: hadolint
-      run: |
-        brew install hadolint
-        hadolint ./Dockerfile
+      - uses: actions/checkout@master
+      - name: hadolint
+        run: |
+          brew install hadolint
+          hadolint ./Dockerfile
