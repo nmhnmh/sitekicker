@@ -48,7 +48,7 @@ class Entry:
             try:
                 first_line_index = all_lines.index("---\n", 0)
                 second_line_index = all_lines.index("---\n", 1)
-                self.user_options = yaml.load(''.join(all_lines[first_line_index+1:second_line_index])) or {}
+                self.user_options = yaml.load(''.join(all_lines[first_line_index+1:second_line_index]), Loader=yaml.FullLoader) or {}
                 self.raw_content = ''.join(all_lines[second_line_index+1:])
             except Exception as e:
                 logging.debug("Entry read exception: %s", e)

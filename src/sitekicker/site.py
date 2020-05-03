@@ -94,7 +94,7 @@ class Site:
         site_yml_path = os.path.join(self.working_path, 'sitekicker.yml')
         if os.path.isfile(site_yml_path):
             with open(site_yml_path, 'rt', encoding='utf8') as site_config:
-                user_options = dotdict(yaml.load(site_config))
+                user_options = dotdict(yaml.load(site_config, Loader=yaml.FullLoader))
                 return user_options
         else:
             raise Exception("sitekicker.yml is not found!")

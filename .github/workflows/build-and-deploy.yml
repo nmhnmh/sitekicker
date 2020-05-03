@@ -2,28 +2,29 @@ name: build and deploy
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - '*.*.*'
 
 jobs:
-  build:
-    runs-on: ubuntu-18.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@master
 
-      - name: build image
-        env:
-          DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/sitekicker:latest
-        run: |
-          docker build . --file Dockerfile --tag ${DOCKER_IMAGE} ||
-          (echo -e "\e[31m[${GITHUB_WORKFLOW}] failed to build\e[m" && exit 1)
+  Linux:
+    runs-on: ubuntu-latest
 
-  lint:
-    runs-on: macOS-10.14
     steps:
-      - uses: actions/checkout@master
-      - name: hadolint
-        run: |
-          brew install hadolint
-          hadolint ./Dockerfile
+    - uses: actions/checkout@v2
+    - name: Get tag
+      id: tag
+      run: |
+        echo ::set-env name=tag::${GITHUB_REF#refs/tags/}
+    - name: Publish to pypi.org
+      run: |
+        poetry install
+        poetry build
+        poetry publish -u __token__ -p ${PYPI_TOKEN}
+    - name: Publish to Docker hub
+      run: |
+      docker login --username nmhnmh --password ${DOCKER_HUB_TOKEN}
+      docker build . -t sitekicker:latest
+      docker tag sitekicker:latest sitekicker:${tag}
+      docker push sitekicker:latest
+      docker push sitekicker:${tag}

@@ -17,7 +17,7 @@ class EnclosureFolder:
         folder_yml_path = os.path.join(self.path, 'folder.yml')
         if os.path.isfile(folder_yml_path):
             with open(folder_yml_path, 'r', encoding='utf8') as folder_config:
-                return yaml.load(folder_config) or {}
+                return yaml.load(folder_config, Loader=yaml.FullLoader) or {}
         else:
             return {}
 

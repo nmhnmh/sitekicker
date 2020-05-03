@@ -52,7 +52,7 @@ def parse_command_line_options(arguments):
     ap.add_argument('--serve', '-s', action="store_true", default=False, help="Serve the built contents with a local server for preview, default is False")
     ap.add_argument('--watch', '-w', action="store_true", default=False, help="Watch for changes and rebuild, default is False")
     ap.add_argument('--full-build', '-f', action="store_true", default=False, help="Build everything from scratch, ignore all caches, it would slow down the build, default is False")
-    ap.add_argument('--version', '-V', action="version", version=sitekicker.version, help="Show version number")
+    ap.add_argument('--version', '-V', action="version", version=sitekicker.__version__, help="Show version number")
     ap.add_argument('--port', '-p', default="8000", help="Default port for the local preview server to listen")
     ap.add_argument('--output-dir', '-o', default="", help="Directory to write build output")
     ap.add_argument("folder", nargs="?", default=".", help="Folder to process, default is current directory")

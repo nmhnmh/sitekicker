@@ -1,8 +1,38 @@
 [tool.poetry]
 name = "sitekicker"
-version = "1.0.3"
+version = "1.0.5"
 description = "Another static site generator"
+readme ="README.md"
 authors = ["Minghao Ni <niminghao804@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/nmhnmh/sitekicker"
+keywords = [
+  "Static Site Generator"
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.5",
+  "Programming Language :: Python :: 3.6",
+  "Programming Language :: Python :: 3.7",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Software Development",
+  "Topic :: System :: Networking",
+  "Topic :: Terminals",
+  "Topic :: Text Processing :: Markup :: HTML",
+  "Topic :: Text Processing",
+  "Topic :: Utilities"
+]
+packages = [
+    { include = "sitekicker", from = "src" }
+]
+
+[tool.poetry.scripts]
+sk = "sitekicker.__main__:main"
+sitekicker = "sitekicker.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.5"

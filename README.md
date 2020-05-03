@@ -1,5 +1,3 @@
-[![TravisCI Build Status](https://travis-ci.org/nmhnmh/sitekicker.svg)](https://travis-ci.org/nmhnmh/sitekicker)
-
 This is my **personal** static site generator, it lacks testings and documents at the moment.
 If you need a static site generator, find one [here](https://www.staticgen.com/) with good community support.
 
@@ -9,9 +7,7 @@ Current Project Status: **Beta, usable, but no testing and documentation**
 
 # Local development
 
-We use [poetry](https://python-poetry.org/) to manage dependencies and virtual environments, make sure you have poetry installed, then in root directory of the project, run `poetry install` first to install all the dependencies and create the virtual environment, then run `poetry shell` to use the virtual environment.
-
-To run unit tests locally: `poetry run test`
+We use [poetry](https://python-poetry.org/) to manage dependencies and virtual environments, make sure you have poetry installed, then in root directory of the project, run `poetry install` first to install all the dependencies and create the virtual environment, then run `poetry shell` to activate the virtual environment.
 
 # Dependencies: what and why
 
@@ -22,27 +18,6 @@ To run unit tests locally: `poetry run test`
 * pymdown-extensions: markdown compiler extensions
 * Jinja2: a template engine
 * watchdog: local folder/file activity watcher
-
-## Feature Todo
-
-* [ ] Flow chart, sequence chart support
-* [ ] Fix incremental build
-* [ ] Trigger page reload when page changed(use websocket)
-* [ ] post-processor to process `<a>` internal cross-link `<a href="id:entry-id-here">A Cross Link</a>`, report when the cross-link is broken
-* [ ] add pagination support
-* [ ] Generate ToC, add perm link to headers
-* [ ] More robust error handling and reporting
-
-# Documentation Todo
-
-* [ ] Add documentation
-* [ ] Setup home page with Github Pages
-
-## Test Todo
-
-* [ ] Add Unit Test And Integration Tests for the Project
-* [ ] Add continuous test with for Mac and Linux
-* [ ] Add continuous test with for Windows
 
 ## site.yml(or sitekicker.yml)
 
