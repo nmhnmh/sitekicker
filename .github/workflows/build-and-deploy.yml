@@ -36,7 +36,7 @@ jobs:
       if: startsWith(env.TAG, 'v')
       run: |
         docker login --username nmhnmh --password ${{ secrets.DOCKER_HUB_TOKEN }}
-        docker build . -t sitekicker:latest
-        docker tag sitekicker:latest sitekicker:${{ env.TAG }}
-        docker push sitekicker:latest
-        docker push sitekicker:${{ env.TAG }}
+        docker build . -t nmhnmh/sitekicker:latest
+        docker tag nmhnmh/sitekicker:latest nmhnmh/sitekicker:${{ env.TAG }}
+        docker push nmhnmh/sitekicker:latest
+        docker push nmhnmh/sitekicker:${{ env.TAG }}

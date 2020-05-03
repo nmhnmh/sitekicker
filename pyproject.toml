@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sitekicker"
-version = "1.0.5"
+version = "1.0.6"
 description = "Another static site generator"
 readme ="README.md"
 authors = ["Minghao Ni <niminghao804@gmail.com>"]
