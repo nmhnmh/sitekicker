@@ -29,6 +29,7 @@ jobs:
       # only publish when it is a tag
       if: startsWith(env.TAG, 'v')
       run: |
+        source $HOME/.poetry/env
         poetry publish -u __token__ -p ${PYPI_TOKEN}
     - name: Publish to Docker hub
       # only publish when it is a tag
