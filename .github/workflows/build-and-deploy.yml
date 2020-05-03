@@ -20,7 +20,7 @@ jobs:
         echo ::set-env name=TAG::${GITHUB_REF#refs/tags/}
     - name: Install dependencies
       run: |
-        sudo apt-get install python3-venv
+        sudo apt-get update && sudo apt-get install python3-venv -y
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
         source $HOME/.poetry/env
         poetry install
