@@ -2,8 +2,10 @@ name: build and deploy
 
 on:
   push:
+    branches:
+      - master
     tags:
-      - '*.*.*'
+      - 'v*.*.*'
 
 jobs:
 
@@ -15,16 +17,23 @@ jobs:
     - name: Get tag
       id: tag
       run: |
-        echo ::set-env name=tag::${GITHUB_REF#refs/tags/}
-    - name: Publish to pypi.org
+        echo ::set-env name=TAG::${GITHUB_REF#refs/tags/}
+    - name: Install dependencies
       run: |
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
         poetry install
         poetry build
+    - name: Publish to pypi.org
+      # only publish when it is a tag
+      if: contains(env.TAG, 'v')
+      run: |
         poetry publish -u __token__ -p ${PYPI_TOKEN}
     - name: Publish to Docker hub
+      # only publish when it is a tag
+      if: contains(env.TAG, 'v')
       run: |
-      docker login --username nmhnmh --password ${DOCKER_HUB_TOKEN}
-      docker build . -t sitekicker:latest
-      docker tag sitekicker:latest sitekicker:${tag}
-      docker push sitekicker:latest
-      docker push sitekicker:${tag}
+        docker login --username nmhnmh --password ${DOCKER_HUB_TOKEN}
+        docker build . -t sitekicker:latest
+        docker tag sitekicker:latest sitekicker:${TAG}
+        docker push sitekicker:latest
+        docker push sitekicker:${TAG}
