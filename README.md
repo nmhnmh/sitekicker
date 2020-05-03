@@ -1,3 +1,5 @@
+![build and deploy](https://github.com/nmhnmh/sitekicker/workflows/build%20and%20deploy/badge.svg?branch=master)
+
 This is my **personal** static site generator, it lacks testings and documents at the moment.
 If you need a static site generator, find one [here](https://www.staticgen.com/) with good community support.
 
