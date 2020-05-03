@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "sitekicker"
+version = "1.0.3"
+description = "Another static site generator"
+authors = ["Minghao Ni <niminghao804@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.5"
+pyyaml = "*"
+pygments = "*"
+beautifulsoup4 = "*"
+markdown = "*"
+pymdown-extensions = "*"
+jinja2 = "*"
+watchdog = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pylint = "*"
+setuptools = "*"
+wheel = "*"
+twine = "*"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
