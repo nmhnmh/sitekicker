@@ -21,16 +21,17 @@ jobs:
     - name: Install dependencies
       run: |
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+        source $HOME/.poetry/env
         poetry install
         poetry build
     - name: Publish to pypi.org
       # only publish when it is a tag
-      if: contains(env.TAG, 'v')
+      if: startsWith(env.TAG, 'v')
       run: |
         poetry publish -u __token__ -p ${PYPI_TOKEN}
     - name: Publish to Docker hub
       # only publish when it is a tag
-      if: contains(env.TAG, 'v')
+      if: startsWith(env.TAG, 'v')
       run: |
         docker login --username nmhnmh --password ${DOCKER_HUB_TOKEN}
         docker build . -t sitekicker:latest
