@@ -30,13 +30,13 @@ jobs:
       if: startsWith(env.TAG, 'v')
       run: |
         source $HOME/.poetry/env
-        poetry publish -u __token__ -p ${PYPI_TOKEN}
+        poetry publish -u __token__ -p ${{ secrets.PYPI_TOKEN }}
     - name: Publish to Docker hub
       # only publish when it is a tag
       if: startsWith(env.TAG, 'v')
       run: |
-        docker login --username nmhnmh --password ${DOCKER_HUB_TOKEN}
+        docker login --username nmhnmh --password ${{ secrets.DOCKER_HUB_TOKEN }}
         docker build . -t sitekicker:latest
-        docker tag sitekicker:latest sitekicker:${TAG}
+        docker tag sitekicker:latest sitekicker:${{ env.TAG }}
         docker push sitekicker:latest
-        docker push sitekicker:${TAG}
+        docker push sitekicker:${{ env.TAG }}
